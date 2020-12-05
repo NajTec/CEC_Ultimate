@@ -1,0 +1,4 @@
+azure-iot-device~=2.0.0
+azure.storage.blob==2.1.0
+requests
+progress
