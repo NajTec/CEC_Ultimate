@@ -1,0 +1,56 @@
+apiVersion: '2019-12-01'
+location: eastus
+name: file-share-demo
+properties:
+  containers:
+  - name: iothub2cassandraservice
+    properties:
+      environmentVariables: 
+      - name: CONFIG_URL
+        value: https://raw.githubusercontent.com/NajTec/CEC_Ultimate/main/config.conf
+      - name: IOTHUB_EVENTHUB_NAME
+        value: myhsiothub
+      - name: IOTHUB_EVENTHUB_ENDPOINT
+        value: Endpoint=sb://iothub-ns-myhsiothu-6934845-d4046aff22.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE=;EntityPath=myhsiothub
+      - name: IOTHUB_ACCESS_POLICY
+        value: iothubowner
+      - name: IOTHUB_EVENTHUB_PARTITIONS
+        value: 4
+      - name: IOTHUB_ACCESS_KEY
+        value: NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE=
+      image: toketi/iothub-to-cassandra:latest
+      ports:
+      - port: 9000
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGB: 1.5
+  - name: cassandra
+    properties:
+      environmentVariables: []
+      image: cassandra:3.9
+      ports:
+      - port: 9042
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGB: 1.5
+      volumeMounts:
+      - mountPath: /var/lib/cassandra
+        name: filesharevolume
+  osType: Linux
+  restartPolicy: Always
+  ipAddress:
+    type: Public
+    dnsNameLabel: myhsiotaci
+    ports:
+      - port: 9042
+      - port: 9000
+  volumes:
+  - name: filesharevolume
+    azureFile:
+      sharename: mycassstorage
+      storageAccountName: myhsstorage
+      storageAccountKey: /fTIS1S3Q7k82kuc3Uxu2LPT94n368Dt/AGNn12eTsYl90Q2PFR4pO/UPet5uA3Ivbv8FEzAnzMc2zYRGz8qEg==
+tags: {}
+type: Microsoft.ContainerInstance/containerGroupsb
