@@ -5,24 +5,25 @@ import random
 import webview
 from cassandra.cluster import Cluster
 
-
-
 cluster = Cluster(['myhsiotaci.eastus.azurecontainer.io'],port=9042)
 session = cluster.connect('mykeyspace')
-rows = session.execute('SELECT * FROM full_log')
-length = session.execute('SELECT count(*) FROM full_log')
 
 run = True
-x = [rows[i].zeitstempel for i in range(0,10)]
-y = [rows[i].humidity for i in range(0,10)]
+
+datasets = []
+
+class Dataset:
+    x: list
+    y: list
+
 
 class Api:
     def init(self):
-        global x, y
+        global datasets
 
         response = {
-            'x': x,
-            'y': y,
+            'x': datasets[0]["x"],
+            'y': datasets[0]["y"],
         }
 
         return response
@@ -33,49 +34,68 @@ class Api:
     def log(self, str):
         print(str)
 
-def Gui():
-    with open('index.html', 'r') as file:
-        html = file.read().replace('\n', '')
 
-    api = Api()
-    window = webview.create_window('API example', html=html, js_api=api)
+def updateGraph(index: int, t: list, y: list):
+    tstr = str([f"new Date('{time}')" for time in t]).replace('"', '')
+    # tstr = str(t)
+    ystr = str(y)
+    idxstr = str(index)
 
-    def updateGraph(index: int, x: list, y: list):
-        xstr = str(x)
-        ystr = str(y)
-        idxstr = str(index)
+    code = f"""
+        myChart.data.datasets[{index}].label = 'Edge Nr. {index}';
+        myChart.data.labels={tstr};
+        // myChart.data.datasets[{idxstr}].data = {{t: {tstr},y: {ystr}}};
+        myChart.data.datasets[{idxstr}].data={ystr};
+        myChart.update();
+        """
+    #myChart.data.datasets[{idxstr}].data.push(\{t:new Date({tstr}), y: {ystr}\})
+    window.evaluate_js(code) 
 
-        window.evaluate_js(
-            """
-            myChart.data.labels="""+xstr+""";
+def thread_function(name):
+    global run
+    while run:
+        time.sleep(0.1)
+        
+        rows = session.execute('SELECT * FROM full_log')
+        device_1_x = [rows[i].zeitstempel for i in range(0,10)]
+        device_1_y = [rows[i].humidity for i in range(0,10)]
+        device_2_x = [rows[i].zeitstempel for i in range(0,10)]
+        device_2_y = [rows[i].temperature for i in range(0,10)]
 
-            myChart.data.datasets["""+idxstr+"""].data="""+ystr+""";
-            myChart.update();
-            """
-        ) 
+        updateGraph(0, device_1_x, device_1_y)
+        updateGraph(1, device_2_x, device_2_y)
 
-    def thread_function(name):
-        global run, api, x, y
 
-        while run:
-            time.sleep(0.1)
-            api.send_data(x, y)
-
-            x.append(x[-1]+1)
-            y.append(random.randrange(10))
-
-            updateGraph(0, x, y)
-            updateGraph(1, x, y)
-
-            # print(y)
-            # print(x)
+def stop_forward_thread():
+    global run
+    run = False
 
 
 if __name__ == '__main__':
-    #window = webview.create_window('API example', html=html, js_api=api)
-    Gui()
+    # init with testvalues
+    datasets.append(
+    {
+        'x':[1, 2, 3, 4, 5, 6, 7, 8],
+        'y':[2, 1, 2, 3, 4, 1, 3, 8]
+    })
+    datasets.append(
+    {
+        'x':[1, 2, 3, 4, 5, 6, 7, 8],
+        'y':[2, 1, 2, 3, 4, 1, 3, 8]
+    })
+
+    # Read HTML
+    with open('index.html', 'r') as file:
+        html = file.read().replace('\n', '')
+
+    # Create API Obj
+    api = Api()
+    window = webview.create_window('API example', html=html, js_api=api)
+
+    # Create Push Obj
     th = threading.Thread(target=thread_function, args=(1,))
     th.start()
 
-    webview.start(debug=True)
-    #run=False
+    # Start GUI
+    webview.start(debug=True) # Blocking
+    stop_forward_thread()

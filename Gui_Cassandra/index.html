@@ -1,58 +1,51 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
 
 </head>
+
 <body>
-<canvas id="myChart" width="500" height="300"></canvas>
-<script>
-   var ctx = document.getElementById("myChart");
-   var myChart = new Chart(ctx, {
-      type: 'line',
+   <canvas id="myChart" width="500" height="300"></canvas>
+   <script>
+      var defaultColors = [
+  "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#3B3EAC", "#0099C6",
+  "#DD4477", "#66AA00", "#B82E2E", "#316395", "#994499", "#22AA99", "#AAAA11",
+  "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#651067"
+];
+      var ctx = document.getElementById("myChart").getContext("2d");
+      var myChart = new Chart(ctx, {
+         type: 'line',
          data: {
-            labels: [1, 2, 3, 4, 5, 6],
-            datasets: [
-               { label: 'HouseHold income',
-               borderColor: 'rgba(255, 0, 0, 1)',
-
-               data: [2, 3, 4, 5, 4, 2],
+            datasets: [{
+               label: 'Demo 1',
+               data: [{
+                  t: new Date(),
+                  y: 12
+               }],
+               borderColor: defaultColors[0],
                fill: false
-         },                { label: 'HouseHold income',
-               data: [1, 1, 1, 1, 1, 1],
-               borderColor: 'rgba(0, 0, 255, 1)',
-
+            }, {
+               label: 'Demo 2',
+               data: [{
+                  t: new Date(),
+                  y: 12
+               }],
+               borderColor: defaultColors[1],
                fill: false
-         }
-      ]
-   },
-   options: {
-      scales: {
-         yAxes: [{
-            ticks: {
-               beginAtZero:true
+            }]
+         },
+         options: {
+            scales: {
+               xAxes: [{
+                  type: 'time'
+               }]
             }
-         }]
-      }
-   }
-});
-// setInterval(initialize, 1000);
-
-   /*function addData(chart, label, data) {
-    chart.data.labels.push(label);
-    chart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data);
-    });
-    chart.update();*/
-
-
-
-/*function getData() {
-   pywebview.api.init().then(function(response) {
-      addData(myChart, 1, 2)
-        });
-    }*/
-</script>
+         }
+      });
+   </script>
 
 </body>
+
 </html>
