@@ -1,27 +1,28 @@
-version: '2'
-services:
-  cassandra:
-    image: cassandra:3.9
-    volumes:
-    - "var/lib/cassandra"
+version: '2' # docker compose 2.0
+services: # Jetzt kommt die Konfiguration meiner Container
+  cassandra: # Container bekommt Namen Cassandra
+    image: cassandra:3.9 # Image Cassandra v3.9 aus dem DockerHub (Quelle für Images von Docker IO)
+    volumes:            # Usb Stick an den Container
+    - "var/lib/cassandra" # Pfad (Inhalt des Ordners wird übertragen)
     ports:
-    - "9042:9042"
-    restart: always
-  iothub2cassandra_service:
-    image: toketi/iothub-to-cassandra:latest
-    depends_on:
+    - "9042:9042" # Eingang:Ausgang für die Ports
+    restart: always # Falls abschmiert, wird er automatisch neu gestartet
+  iothub2cassandra_service: # Definition neuer Container (Verbindungstück IotHub und Datenbank)
+    image: toketi/iothub-to-cassandra:latest # Image iothub-to-cassandra vlatest aus dem DockerHub (Quelle für Images von Docker IO)
+    depends_on: # Dieser Container wird erst gestartet wenn Cassandra läuft
     - cassandra
-    environment:
-     CONFIG_URL: "https://raw.githubusercontent.com/NajTec/CEC_Ultimate/main/config.conf"
+    environment: # Variablen für den Container
+     CONFIG_URL: "https://raw.githubusercontent.com/NajTec/CEC_Ultimate/main/config.conf" # Variable für Ort der conf datei
      #CONFIG_FILE: "conf file accessible from the container"
-     IOTHUB_EVENTHUB_NAME: "myhsiothub"
-     IOTHUB_EVENTHUB_ENDPOINT: "Endpoint=sb://iothub-ns-myhsiothub-6934845-d4046aff22.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE=;EntityPath=myhsiothub"
+     IOTHUB_EVENTHUB_NAME: "myhsiothub" # Name iothub
+     IOTHUB_EVENTHUB_ENDPOINT: "Endpoint=sb://iothub-ns-myhsiothub-6934845-d4046aff22.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE=;EntityPath=myhsiothub" 
+     # Hier lesen wir die gesendeten Nachrichten
      IOTHUB_EVENTHUB_PARTITIONS: "4"
-     IOTHUB_ACCESS_POLICY: "iothubowner"
-     IOTHUB_ACCESS_KEY: "NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE="
-    links: 
+     IOTHUB_ACCESS_POLICY: "iothubowner" # Richtlinie (rechte für den Zugriff auf den iothub)
+     IOTHUB_ACCESS_KEY: "NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE=" #Passwort
+    links: # Container sendet Nachrichten zu Cassandra Container
      - cassandra
     ports:
-     - "9000:9000"
-    restart: always
+     - "9000:9000" # Eingang:Ausgang
+    restart: always # Falls abschmiert, wird er automatisch neu gestartet
 
