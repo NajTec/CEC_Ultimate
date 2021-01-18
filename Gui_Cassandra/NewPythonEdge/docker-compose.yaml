@@ -1,0 +1,27 @@
+version: '2'
+services:
+  cassandra:
+    image: cassandra:3.9
+    volumes:
+    - "var/lib/cassandra"
+    ports:
+    - "9042:9042"
+    restart: always
+  iothub2cassandra_service:
+    image: toketi/iothub-to-cassandra:latest
+    depends_on:
+    - cassandra
+    environment:
+     CONFIG_URL: "https://raw.githubusercontent.com/NajTec/CEC_Ultimate/main/config.conf"
+     #CONFIG_FILE: "conf file accessible from the container"
+     IOTHUB_EVENTHUB_NAME: "myhsiothub"
+     IOTHUB_EVENTHUB_ENDPOINT: "Endpoint=sb://iothub-ns-myhsiothub-6934845-d4046aff22.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE=;EntityPath=myhsiothub"
+     IOTHUB_EVENTHUB_PARTITIONS: "4"
+     IOTHUB_ACCESS_POLICY: "iothubowner"
+     IOTHUB_ACCESS_KEY: "NgeR8a3GhdeBBWVeEYpUyG4irVlv3bimOkqxYFY0BzE="
+    links: 
+     - cassandra
+    ports:
+     - "9000:9000"
+    restart: always
+
