@@ -13,7 +13,7 @@
               "hsiotacr": {
                 "username": "$CONTAINER_REGISTRY_USERNAME_hsiotacr",
                 "password": "$CONTAINER_REGISTRY_PASSWORD_hsiotacr",
-                "address": "hsiotacr.azurecr.io"
+                "address": "intellicontainerregistry.azurecr.io"
               }
             }
           }
@@ -66,16 +66,6 @@
               "image": "${MODULES.SampleModule}",
               "createOptions": {}
             }
-          },
-          "SimulatedTemperatureSensor": {
-            "version": "1.0",
-            "type": "docker",
-            "status": "running",
-            "restartPolicy": "always",
-            "settings": {
-              "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0",
-              "createOptions": {}
-            }
           }
         }
       }
@@ -84,8 +74,7 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "SampleModuleToIoTHub": "FROM /messages/modules/SampleModule/outputs/* INTO $upstream",
-          "sensorToSampleModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/SampleModule/inputs/input1\")"
+          "SampleModuleToIoTHub": "FROM /messages/modules/SampleModule/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

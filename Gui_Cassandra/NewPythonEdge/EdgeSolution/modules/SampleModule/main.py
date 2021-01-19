@@ -12,7 +12,7 @@ from azure.iot.device import IoTHubDeviceClient, Message
 # The device connection string to authenticate the device with your IoT hub.
 # Using the Azure CLI:
 # az iot hub device-identity show-connection-string --hub-name {YourIoTHubName} --device-id MyNodeDevice --output table
-CONNECTION_STRING = "HostName=myhsiothub.azure-devices.net;DeviceId=myEdgeDevice;SharedAccessKey=uqdngjzq/qJw7/V+I/3esUAwdKDMvilDnG+CvJpupCg="
+CONNECTION_STRING = "HostName=intelliHub23.azure-devices.net;DeviceId=myEdgeDevice;SharedAccessKey=Hex/06CUnTnS+cdubB0RE4ZbMBFUxIlU9sbmdRtVQ58="
 
 # Define the JSON message to send to IoT Hub.
 TEMPERATURE = 20.0
@@ -47,7 +47,7 @@ def iothub_client_telemetry_sample_run():
             print( "Sending message: {}".format(message) )
             client.send_message(message)
             print ( "Message successfully sent" )
-            time.sleep(1)
+            time.sleep(3)
 
     except KeyboardInterrupt:
         print ( "IoTHubClient sample stopped" )

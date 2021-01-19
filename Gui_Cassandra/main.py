@@ -3,8 +3,10 @@ import time
 import sys
 import random
 import webview
+import json
 from cassandra.cluster import Cluster
 
+# cluster = Cluster(['myhsiotaci.westus.azurecontainer.io'],port=9042)
 cluster = Cluster(['myhsiotaci.eastus.azurecontainer.io'],port=9042)
 session = cluster.connect('mykeyspace')
 
@@ -54,13 +56,27 @@ def updateGraph(index: int, t: list, y: list):
 def thread_function(name):
     global run
     while run:
-        time.sleep(0.1)
+        time.sleep(1)
         
         rows = session.execute('SELECT * FROM full_log')
-        device_1_x = [rows[i].zeitstempel for i in range(0,10)]
-        device_1_y = [rows[i].humidity for i in range(0,10)]
-        device_2_x = [rows[i].zeitstempel for i in range(0,10)]
-        device_2_y = [rows[i].temperature for i in range(0,10)]
+        length  = session.execute('SELECT count(*) FROM full_log')[0].count
+        print("######################## length:"+ str(type(length)))
+        print("######################## length:"+ str(length))
+
+        print("1")
+        device_1_x = [rows[i].zeitstempel for i in range(length-20,length)]
+        print("2")
+        device_1_y = [rows[i].humidity for i in range(length-20,length)]
+        print("3")
+        device_2_x = [rows[i].zeitstempel for i in range(length-20,length)]
+        print("4")
+        device_2_y = [rows[i].temperature for i in range(length-20,length)]
+        print("5")
+
+        print("\n")
+        print(device_1_x)
+        print(device_2_x)
+        print("\n")
 
         updateGraph(0, device_1_x, device_1_y)
         updateGraph(1, device_2_x, device_2_y)

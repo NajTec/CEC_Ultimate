@@ -11,15 +11,15 @@ properties:
       - name: CONFIG_FILE
         value: "/etc/config.conf"
       - name: IOTHUB_EVENTHUB_NAME
-        value: "myhsiothub"
+        value: "intelliHub23"
       - name: IOTHUB_EVENTHUB_ENDPOINT
-        value: "Endpoint=sb://iothub-ns-myhsiothub-7374987-dda7b6a9c0.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=o2XAB2PLn0zMiiv6NOhUAfv3QFiMT0urR7VVZT/VqNY=;EntityPath=myhsiothub"
+        value: "Endpoint=sb://ihsuprodbyres138dednamespace.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=EeM2+d1i5nYOx0uXCb0g6YV7wmG2/pHunsUn6RAhxnw=;EntityPath=iothub-ehub-intellihub-6964982-5c3bd7b699"
       - name: IOTHUB_ACCESS_POLICY
         value: "iothubowner"
       - name: IOTHUB_EVENTHUB_PARTITIONS
-        value: 4
+        value: 2
       - name: IOTHUB_ACCESS_KEY
-        value: "o2XAB2PLn0zMiiv6NOhUAfv3QFiMT0urR7VVZT/VqNY="
+        value: "EeM2+d1i5nYOx0uXCb0g6YV7wmG2/pHunsUn6RAhxnw="
       image: toketi/iothub-to-cassandra:latest
       ports:
       - port: 9000
@@ -38,8 +38,8 @@ properties:
       - port: 9042
       resources:
         requests:
-          cpu: 1.0
-          memoryInGB: 1.5
+          cpu: 2.0
+          memoryInGB: 3.0
       volumeMounts:
       - mountPath: /var/lib/cassandra
         name: filesharevolume
@@ -54,13 +54,13 @@ properties:
   volumes:
   - name: filesharevolume
     azureFile:
-      sharename: mycassstorage
-      storageAccountName: myhsstorage
-      storageAccountKey: 735+L6bxQmEwHo0qyNCf32ofK8iP7NTir1Py5yHsjf0RUQRHFksx/Hv+svncT3X8joZnSxBvSTgjHTZWve3SqQ==
+      sharename: intellicassandra1221
+      storageAccountName: intellistorage1221  
+      storageAccountKey: tgW+6PULALtI+QGXwqb8OZLK5mxMdWxLev67MPnujYIWJ0HTWSUrmN8tidKZM5FJZEWCVhFu6b9BAdQ2RfnuVw==
   - name: configvolume
     azureFile:
-      sharename: myconfigstorage
-      storageAccountName: myhsstorage
-      storageAccountKey: 735+L6bxQmEwHo0qyNCf32ofK8iP7NTir1Py5yHsjf0RUQRHFksx/Hv+svncT3X8joZnSxBvSTgjHTZWve3SqQ==
+      sharename: intelliconnector1221
+      storageAccountName: intellistorage1221
+      storageAccountKey: tgW+6PULALtI+QGXwqb8OZLK5mxMdWxLev67MPnujYIWJ0HTWSUrmN8tidKZM5FJZEWCVhFu6b9BAdQ2RfnuVw==
 tags: {}
 type: Microsoft.ContainerInstance/containerGroups
